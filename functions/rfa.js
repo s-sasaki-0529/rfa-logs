@@ -38,9 +38,9 @@ async function putResultToDynamoDB({imageUrl, success, result}) {
     Item: {
       userName: 'Sa2Knight', // TODO: 一応ここも注入できるようにしたい
       datetime: (new Date()).toISOString(),
-      imageUrl,
       success,
-      ...result
+      ...result,
+      imageUrl
     }
   }
   console.log(params)
