@@ -32,13 +32,14 @@ function parse (text) {
   return resultObject
 }
 
-async function putResultToDynamoDB({imageUrl, result}) {
+async function putResultToDynamoDB({imageUrl, success, result}) {
   const params = {
     TableName: 'rfa-logs',
     Item: {
       userName: 'Sa2Knight', // TODO: 一応ここも注入できるようにしたい
       datetime: (new Date()).toISOString(),
       imageUrl,
+      success,
       ...result
     }
   }
@@ -65,9 +66,10 @@ module.exports.index = async event => {
   try {
     const rfaResult = parse(cloudVisionResult)
     console.log(rfaResult)
-    await putResultToDynamoDB({imageUrl, result: rfaResult})
+    await putResultToDynamoDB({imageUrl, success: true, result: rfaResult})
   } catch (err) {
     console.log('parseError')
     console.error(err)
+    await putResultToDynamoDB({imageUrl, success: false, result: {}})
   }
 }
