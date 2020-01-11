@@ -1,5 +1,6 @@
 const aws = require('aws-sdk')
 const lambda = new aws.Lambda()
+const docClient = new aws.DynamoDB.DocumentClient({region: 'ap-northeast-1'})
 
 function parse (text) {
   const nameLines = []
@@ -25,8 +26,24 @@ function parse (text) {
       nameLines.push(line)
     }
   })
-  nameLines.forEach((name, index) => { resultLines[index].name = name })
-  return resultLines
+
+  const resultObject = {}
+  nameLines.forEach((name, index) => { resultObject[name] = resultLines[index].total })
+  return resultObject
+}
+
+async function putResultToDynamoDB({imageUrl, result}) {
+  const params = {
+    TableName: 'rfa-logs',
+    Item: {
+      userName: 'Sa2Knight', // TODO: 一応ここも注入できるようにしたい
+      datetime: (new Date()).toISOString(),
+      imageUrl,
+      ...result
+    }
+  }
+  console.log(params)
+  return docClient.put(params).promise()
 }
 
 module.exports.index = async event => {
@@ -43,13 +60,14 @@ module.exports.index = async event => {
   }).promise()
 
   const cloudVisionResult = JSON.parse(lambdaResult.Payload).result.textAnnotations[0].description
-  console.log({cloudVisionResult})
+  console.log(cloudVisionResult)
   
   try {
     const rfaResult = parse(cloudVisionResult)
-    console.log({rfaResult})
+    console.log(rfaResult)
+    await putResultToDynamoDB({imageUrl, result: rfaResult})
   } catch (err) {
     console.log('parseError')
-    console.err(err)
+    console.error(err)
   }
 }
