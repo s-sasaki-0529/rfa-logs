@@ -28,13 +28,14 @@ module.exports.index = async event => {
   const dirName = `${userName}/${dateStr}`
 
   const origin = await Jimp.read(url)
-  await uploadToS3(origin, `${dirName}/origin.jpeg`)
+  const results = []
+
   await uploadToS3(origin.clone().crop(X1, Y, WIDTH, HEIGHT),  `${dirName}/1.jpeg`)
   await uploadToS3(origin.clone().crop(X2, Y, WIDTH, HEIGHT),  `${dirName}/2.jpeg`)
   await uploadToS3(origin.clone().crop(X3, Y, WIDTH, HEIGHT),  `${dirName}/3.jpeg`)
 
   return {
     statusCode: 200,
-    body: { url, userName, dateTime, dirName }
+    dirName
   }
 };
