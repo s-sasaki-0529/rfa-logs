@@ -1,0 +1,21 @@
+service: sasaki-rfa-logs
+app: rfa-logs
+org: shingosasaki
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: ap-northeast-1
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:*
+      Resource: "arn:aws:s3:::sasaki-rfa-logs/*"
+functions:
+  imageCreator:
+    handler: functions/imageCreator.index
+    timeout: 30
+  cloudVisionDispatcher:
+    handler: functions/cloudVisionDispatcher.index
+    timeout: 30
+    environment:
+      TOKEN: ${ssm:sasaki-rfa-secret-param}
