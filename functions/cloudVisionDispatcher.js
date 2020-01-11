@@ -25,10 +25,9 @@ module.exports.index = async event => {
   
   const response = await axios.post(ENDPOINT, postData).catch((e) => { console.log(e) })
   if (response) {
-    console.log(response.data)
     return {
       statusCode: 200,
-      result: response.data
+      result: response.data.responses[0]
     }
   } else {
     return {
