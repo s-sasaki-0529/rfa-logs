@@ -27,7 +27,7 @@ module.exports.index = async event => {
   if (response) {
     return {
       statusCode: 200,
-      result: response.data.responses[0].textAnnotations[0].description 
+      result: response.data
     }
   } else {
     return {
