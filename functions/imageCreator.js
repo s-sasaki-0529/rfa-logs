@@ -26,6 +26,7 @@ module.exports.index = async event => {
   const dateTime = new Date(event.dateTime || event.queryStringParameters.dateTime)
   const dateStr = `${dateTime.getFullYear()}-${dateTime.getMonth() + 1}-${dateTime.getDate()}`
   const dirName = `${userName}/${dateStr}`
+  console.log({ url, userName, dateStr, dirName })
 
   const origin = await Jimp.read(url)
   const results = []

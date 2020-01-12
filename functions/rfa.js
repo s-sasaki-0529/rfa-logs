@@ -5,10 +5,18 @@ const docClient = new aws.DynamoDB.DocumentClient({region: 'ap-northeast-1'})
 function parse (text) {
   const nameLines = []
   const resultLines = []
+  const blackList = ['引っぱりバンザイサイドベンド']
 
   text = text.split(/\n/)
   text = text.filter((line) => line)
-  text = text.map((line) => line.replace('、', '').replace(' ', ''))
+  text = text.map((line) => {
+    return line
+      .replace('、', '')
+      .replace(' ', '')
+      .replace(/(\d+)(\D)(\d+)(\D)\)$/, '$1$2($3$4)') // 171回1990回) → 171回(1990回)
+      .replace(/(\D+)(\d+)(\D)(\d+)\D?/, '$1$2$3($4$3)') // 引っぱりバンザイサイドベンド1081秒117999) → 引っ張りバンザイサイドベンド1081秒(117999秒)
+  })
+
   text.forEach((line) => {
     const matched = line.match(/(\D*)(\d+).\((\d+).\)$/)
 
@@ -28,7 +36,9 @@ function parse (text) {
   })
 
   const resultObject = {}
-  nameLines.forEach((name, index) => { resultObject[name] = resultLines[index].total })
+  nameLines.forEach((name, index) => {
+    resultObject[name] = blackList.includes(name) ? -1 : resultLines[index].total
+  })
   return resultObject
 }
 
