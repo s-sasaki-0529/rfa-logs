@@ -11,5 +11,8 @@
   "dependencies": {
     "axios": "^0.19.1",
     "jimp": "^0.9.3"
+  },
+  "devDependencies": {
+    "serverless-layers": "^1.4.4"
   }
 }

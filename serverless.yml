@@ -46,3 +46,11 @@ functions:
     timeout: 30
     environment:
       TOKEN: ${ssm:sasaki-rfa-secret-param}
+plugins:
+  - serverless-layers
+custom:
+  serverless-layers:
+    layersDeploymentBucket: sasaki-rfa-logs-serverless-layers
+exclude:
+  - package.json
+  - package-lock.json
