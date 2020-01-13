@@ -2,6 +2,9 @@ const aws = require('aws-sdk')
 const lambda = new aws.Lambda()
 const docClient = new aws.DynamoDB.DocumentClient({region: 'ap-northeast-1'})
 
+const DYNAMO_TABLE_NAME = 'rfa-logs'
+const USER_NAME = 'Sa2Knight'
+
 function parse (text) {
   const nameLines = []
   const resultLines = []
@@ -44,13 +47,15 @@ function parse (text) {
 
 async function putResultToDynamoDB({imageUrl, success, result}) {
   const params = {
-    TableName: 'rfa-logs',
+    TableName: DYNAMO_TABLE_NAME,
     Item: {
-      userName: 'Sa2Knight', // TODO: 一応ここも注入できるようにしたい
-      datetime: (new Date()).toISOString(),
-      success,
-      ...result,
-      imageUrl
+      userName: USER_NAME, // TODO: 一応ここも注入できるようにしたい
+      values: {
+        datetime: (new Date()).toISOString(),
+        success,
+        ...result,
+        imageUrl
+      }
     }
   }
   console.log(params)
