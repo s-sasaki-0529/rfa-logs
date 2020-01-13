@@ -23,8 +23,7 @@ async function uploadToS3(image, key) {
 module.exports.index = async event => {
   const url = event.url || event.queryStringParameters.url
   const userName = event.userName || event.queryStringParameters.userName
-  const dateTime = new Date()
-  const dateStr = `${dateTime.getFullYear()}-${dateTime.getMonth() + 1}-${dateTime.getDate()}`
+  const dateStr = (new Date()).toISOString()
   const dirName = `${userName}/${dateStr}`
   console.log({ url, userName, dateStr, dirName })
 
