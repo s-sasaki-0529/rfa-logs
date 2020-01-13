@@ -1,8 +1,5 @@
 const aws = require('aws-sdk')
 const lambda = new aws.Lambda()
-const docClient = new aws.DynamoDB.DocumentClient({region: 'ap-northeast-1'})
-
-const DYNAMO_TABLE_NAME = 'rfa-logs'
 const USER_NAME = 'Sa2Knight'
 
 function parse (text) {
@@ -45,22 +42,6 @@ function parse (text) {
   return resultObject
 }
 
-async function putResultToDynamoDB({imageUrl, result}) {
-  const params = {
-    TableName: DYNAMO_TABLE_NAME,
-    Item: {
-      userName: USER_NAME, // TODO: 一応ここも注入できるようにしたい
-      values: {
-        updatedAt: (new Date()).toISOString(),
-        lastImageUrl: imageUrl,
-        ...result,
-      }
-    }
-  }
-  console.log(params)
-  return docClient.put(params).promise()
-}
-
 module.exports.index = async event => {
   const record = event.Records[0]
   const region = record.awsRegion
@@ -75,14 +56,19 @@ module.exports.index = async event => {
   }).promise()
 
   const cloudVisionResult = JSON.parse(lambdaResult.Payload).result.textAnnotations[0].description
-  console.log(cloudVisionResult)
+  console.log({cloudVisionResult})
   
+  let rfaResult
   try {
-    const rfaResult = parse(cloudVisionResult)
-    console.log(rfaResult)
-    await putResultToDynamoDB({imageUrl, success: true, result: rfaResult})
+    rfaResult = parse(cloudVisionResult)
+    console.log({rfaResult})
   } catch (err) {
-    console.log('parseError')
     console.error(err)
+    return null
   }
+
+  await lambda.invoke({
+    FunctionName: 'sasaki-rfa-logs-dev-db',
+    Payload: JSON.stringify({userName: USER_NAME, imageUrl, results: rfaResult})
+  }).promise()
 }
