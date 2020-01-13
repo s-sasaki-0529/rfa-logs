@@ -7,7 +7,7 @@ module.exports.index = async event => {
 
   const result = await lambda.invoke({
     FunctionName: 'sasaki-rfa-logs-dev-imageCreator',
-    Payload: JSON.stringify({url, dateTime, userName}) // pass params
+    Payload: JSON.stringify({url, userName}) // pass params
   }).promise()
 
   return {

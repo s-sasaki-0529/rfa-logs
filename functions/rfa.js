@@ -45,16 +45,15 @@ function parse (text) {
   return resultObject
 }
 
-async function putResultToDynamoDB({imageUrl, success, result}) {
+async function putResultToDynamoDB({imageUrl, result}) {
   const params = {
     TableName: DYNAMO_TABLE_NAME,
     Item: {
       userName: USER_NAME, // TODO: 一応ここも注入できるようにしたい
       values: {
-        datetime: (new Date()).toISOString(),
-        success,
+        updatedAt: (new Date()).toISOString(),
+        lastImageUrl: imageUrl,
         ...result,
-        imageUrl
       }
     }
   }
@@ -85,6 +84,5 @@ module.exports.index = async event => {
   } catch (err) {
     console.log('parseError')
     console.error(err)
-    await putResultToDynamoDB({imageUrl, success: false, result: {}})
   }
 }
