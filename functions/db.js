@@ -20,12 +20,14 @@ async function updateResult({userName, imageUrl, results}) {
   const newDoc = await dynamoClient.update({
     TableName: DYNAMO_TABLE_NAME,
     Key: { userName },
-    UpdateExpression: 'set results = :r',
+    UpdateExpression: 'set results = :r, meta = :m',
     ExpressionAttributeValues: {
+      ':m': {
+        updatedAt: (new Date()).toISOString(),
+        lastImageUrl: imageUrl
+      },
       ':r': {
         ...currentResult,
-        updatedAt: (new Date()).toISOString(),
-        lastImageUrl: imageUrl,
         ...results
       }
     },
