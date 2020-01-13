@@ -1,25 +1,41 @@
 const aws = require('aws-sdk')
-const docClient = new aws.DynamoDB.DocumentClient({region: 'ap-northeast-1'})
+const dynamoClient = new aws.DynamoDB.DocumentClient({region: 'ap-northeast-1'})
 const DYNAMO_TABLE_NAME = 'rfa-logs'
 
-async function putResultToDynamoDB({userName, imageUrl, results}) {
+async function fetchCurrentResult({userName}) {
   const params = {
     TableName: DYNAMO_TABLE_NAME,
+    Key: { userName }
+  }
+  const currentDoc = await dynamoClient.get(params).promise()
+  if (currentDoc.hasOwnProperty('Item')) {
+    return currentDoc.Item.results
+  } else {
+    return {}
+  }
+}
+
+async function updateResult({userName, imageUrl, results}) {
+  const currentResult = await fetchCurrentResult({ userName })
+  const newDoc = await dynamoClient.update({
+    TableName: DYNAMO_TABLE_NAME,
     Key: { userName },
-    Item: {
-      userName,
-      results: {
+    UpdateExpression: 'set results = :r',
+    ExpressionAttributeValues: {
+      ':r': {
+        ...currentResult,
         updatedAt: (new Date()).toISOString(),
         lastImageUrl: imageUrl,
-        ...results,
+        ...results
       }
-    }
-  }
-  console.log(params)
-  return docClient.put(params).promise()
+    },
+    ReturnValues: 'UPDATED_NEW'
+  }).promise()
+
+  return newDoc
 }
 
 module.exports.index = async event => {
   const { userName, imageUrl, results } = event
-  await putResultToDynamoDB({userName, imageUrl, results})
+  await updateResult({ userName, imageUrl, results })
 }
