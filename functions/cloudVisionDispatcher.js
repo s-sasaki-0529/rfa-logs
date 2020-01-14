@@ -5,14 +5,15 @@ module.exports.index = async event => {
   const ENDPOINT = `https://vision.googleapis.com/v1/images:annotate?key=${TOKEN}`
   const IMAGE_URL = event.imageUrl
   console.log({IMAGE_URL})
+
+  const imageResponse = await axios.get(IMAGE_URL, { responseType: 'arraybuffer'})
+  const imageBase64 = Buffer.from(imageResponse.data, 'binary').toString('base64') 
   
   const postData = {
     requests: [
       {
         image: {
-          source: {
-            imageUri: IMAGE_URL
-          }
+          content: imageBase64
         },
         features: [
           {
@@ -32,6 +33,7 @@ module.exports.index = async event => {
       result: response.data.responses[0]
     }
   } else {
+    console.log('ERROR')
     console.log(JSON.stringify(response.data))
     return {
       statusCode: 500

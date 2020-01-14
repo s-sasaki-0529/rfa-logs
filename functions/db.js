@@ -23,7 +23,7 @@ async function updateResult({userName, imageUrl, results}) {
     UpdateExpression: 'set results = :r, meta = :m',
     ExpressionAttributeValues: {
       ':m': {
-        updatedAt: results[Object.keys[results]][0].updatedAt,
+        updatedAt: results[Object.keys(results)[0]].updatedAt,
         lastImageUrl: imageUrl
       },
       ':r': {
@@ -34,10 +34,13 @@ async function updateResult({userName, imageUrl, results}) {
     ReturnValues: 'UPDATED_NEW'
   }).promise()
 
+  console.log({newDoc})
   return newDoc
 }
 
 module.exports.index = async event => {
   const { userName, imageUrl, results } = event
+  console.log({results})
+
   await updateResult({ userName, imageUrl, results })
 }
