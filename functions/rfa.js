@@ -37,7 +37,12 @@ function parse (text) {
 
   const resultObject = {}
   nameLines.forEach((name, index) => {
-    resultObject[name] = blackList.includes(name) ? -1 : resultLines[index].total
+    if (!blackList.includes(name)) {
+      resultObject[name] = {
+        value: resultLines[index].total,
+        updatedAt: (new Date()).toISOString(),
+      }
+    }
   })
   return resultObject
 }
