@@ -36,11 +36,14 @@ function parse (text) {
   })
 
   const resultObject = {}
+  const date = new Date()
+  date.setTime(date.getTime() + 1000 * 60 * 60 * 9)
+
   nameLines.forEach((name, index) => {
     if (!blackList.includes(name)) {
       resultObject[name] = {
         value: resultLines[index].total,
-        updatedAt: (new Date()).toISOString(),
+        updatedAt: date.toISOString(),
       }
     }
   })
@@ -60,12 +63,18 @@ module.exports.index = async event => {
     Payload: JSON.stringify({imageUrl})
   }).promise()
 
-  const cloudVisionResult = JSON.parse(lambdaResult.Payload).result.textAnnotations[0].description
-  console.log({cloudVisionResult})
+  const cloudVisionResult = JSON.parse(lambdaResult.Payload)
+  if (cloudVisionResult.statusCode != 200) {
+    console.error('CloudVisionDispatcherError')
+    return
+  }
+
+  const description = cloudVisionResult.result.textAnnotations[0].description
+  console.log({description})
   
   let rfaResult
   try {
-    rfaResult = parse(cloudVisionResult)
+    rfaResult = parse(description)
     console.log({rfaResult})
   } catch (err) {
     console.error(err)

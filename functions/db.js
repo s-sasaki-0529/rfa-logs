@@ -23,7 +23,7 @@ async function updateResult({userName, imageUrl, results}) {
     UpdateExpression: 'set results = :r, meta = :m',
     ExpressionAttributeValues: {
       ':m': {
-        updatedAt: (new Date()).toISOString(),
+        updatedAt: results[Object.keys[results]][0].updatedAt,
         lastImageUrl: imageUrl
       },
       ':r': {
