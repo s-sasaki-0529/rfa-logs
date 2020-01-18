@@ -82,7 +82,7 @@ module.exports.index = async event => {
   }
 
   await lambda.invoke({
-    FunctionName: 'sasaki-rfa-logs-dev-db',
+    FunctionName: 'sasaki-rfa-logs-dev-dbWriter',
     Payload: JSON.stringify({userName: USER_NAME, imageUrl, results: rfaResult})
   }).promise()
 }
