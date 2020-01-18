@@ -32,6 +32,8 @@ functions:
   dbReader:
     handler: functions/dbReader.index
     timeout: 30
+    events:
+      - http: GET /
   dbWriter:
     handler: functions/dbWriter.index
     timeout: 30

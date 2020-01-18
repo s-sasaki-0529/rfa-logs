@@ -15,13 +15,16 @@ async function fetchCurrentResult({userName}) {
   }
 }
 
-module.exports.index = async event => {
-  const { userName } = event
-  const results = await fetchCurrentResult({ userName })
-  console.log({results})
+module.exports.index = async (event, context, callback) => {
+  console.log({ event })
+  const userName = event.userName || event.queryStringParameters.userName
+  console.log({ userName })
 
-  return {
-    statudCode: 200,
-    body: JSON.stringify(results)
-  }
+  const results = await fetchCurrentResult({ userName })
+  console.log({ results })
+
+  callback(null, {
+    statusCode: 200,
+    body: JSON.stringify({ results })
+  })
 }
