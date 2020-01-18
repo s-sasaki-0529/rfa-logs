@@ -29,6 +29,9 @@ functions:
   imageCreator:
     handler: functions/imageCreator.index
     timeout: 30
+  dbReader:
+    handler: functions/dbReader.index
+    timeout: 30
   dbWriter:
     handler: functions/dbWriter.index
     timeout: 30
@@ -40,7 +43,6 @@ functions:
         bucket: sasaki-rfa-logs
         event: s3:ObjectCreated:*
         existing: true
-
   cloudVisionDispatcher:
     handler: functions/cloudVisionDispatcher.index
     timeout: 30
