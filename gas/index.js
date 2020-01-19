@@ -29,10 +29,13 @@ function updateBackgroundColor() {
   var rowsCount = 82;
   for (var row = 2; row <= rowsCount; row++) {
     var nextTarget = sheet.getRange(row, 4).getValue()
+    var columns = sheet.getRange(row, 1, 1, 6)
     if (nextTarget === '') {
-      sheet.getRange(row, 1, 1, 6).setBackgroundRGB(220, 220, 220)
+      columns.setBackgroundRGB(220, 220, 220)
     } else if (nextTarget <= 0) {
-      sheet.getRange(row, 1, 1, 6).setBackgroundRGB(255, 228, 225)
+      columns.setBackgroundRGB(255, 228, 225)
+    } else {
+      columns.setBackgroundRGB(255, 255, 255)
     }
   }
 }
