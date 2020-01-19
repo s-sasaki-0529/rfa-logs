@@ -41,7 +41,6 @@ function parse (text) {
 
   const resultObject = {}
   const date = new Date()
-  date.setTime(date.getTime() + 1000 * 60 * 60 * 9)
 
   nameLines.forEach((name, index) => {
     if (!blackList.includes(name)) {
