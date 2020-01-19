@@ -5,7 +5,7 @@ const USER_NAME = 'Sa2Knight'
 function parse (text) {
   const nameLines = []
   const resultLines = []
-  const blackList = ['引っぱりバンザイサイドベンド']
+  const blackList = ['リングコン押しこみ', '引っぱりバンザイサイドベンド']
 
   text = text.split(/\n/)
   text = text.filter((line) => line)
@@ -16,6 +16,7 @@ function parse (text) {
       .replace(/(\d+)(\D)(\d+)(\D)\)$/, '$1$2($3$4)') // 171回1990回) → 171回(1990回)
       .replace(/(\d+)(\D)(\d+)(\D)$/, '$1$2($3$4)') // 1042m17253m → 1042m(17253m)
       .replace(/(\D+)(\d+)(\D)(\d+)\D?/, '$1$2$3($4$3)') // 引っぱりバンザイサイドベンド1081秒117999) → 引っ張りバンザイサイドベンド1081秒(117999秒)
+      .replace(/^(\d{7,}).+$/, '0回(0回)') // 22139142650円) → 0回(0回) 不正データのため
   })
 
   text.forEach((line) => {
