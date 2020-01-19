@@ -40,7 +40,7 @@ function updateBackgroundColor() {
   }
 }
 
-function myFunction() {
+function update() {
   updateResults();
   updateBackgroundColor();
 }
