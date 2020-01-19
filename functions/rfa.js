@@ -14,6 +14,7 @@ function parse (text) {
       .replace('、', '')
       .replace(' ', '')
       .replace(/(\d+)(\D)(\d+)(\D)\)$/, '$1$2($3$4)') // 171回1990回) → 171回(1990回)
+      .replace(/(\d+)(\D)(\d+)(\D)$/, '$1$2($3$4)') // 1042m17253m → 1042m(17253m)
       .replace(/(\D+)(\d+)(\D)(\d+)\D?/, '$1$2$3($4$3)') // 引っぱりバンザイサイドベンド1081秒117999) → 引っ張りバンザイサイドベンド1081秒(117999秒)
   })
 
@@ -35,6 +36,8 @@ function parse (text) {
     }
   })
 
+  console.log({ nameLines, resultLines })
+
   const resultObject = {}
   const date = new Date()
   date.setTime(date.getTime() + 1000 * 60 * 60 * 9)
@@ -45,6 +48,7 @@ function parse (text) {
         value: resultLines[index].total,
         updatedAt: date.toISOString(),
       }
+      console.log({ name, result: resultObject[name] })
     }
   })
   return resultObject
