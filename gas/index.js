@@ -15,7 +15,7 @@ function searchRow(text) {
   Logger.log("searched: " + text);
   var textFinder = sheet.createTextFinder(text).matchEntireCell(true);
   var range = textFinder.findNext();
-  return range.getRow();
+  return range ? range.getRow() : null;
 }
 
 function fetchCurrentResults() {
@@ -32,9 +32,11 @@ function updateResults() {
     var total = results[key].value;
     var updatedAt = new Date(results[key].updatedAt);
     var row = searchRow(name)
-    Logger.log(name)
-    sheet.getRange(row, COL_TOTAL).setValue(total);
-    sheet.getRange(row, COL_UPDATED).setValue(updatedAt);
+    if (row){
+      Logger.log(name)
+      sheet.getRange(row, COL_TOTAL).setValue(total);
+      sheet.getRange(row, COL_UPDATED).setValue(updatedAt);
+    }
   })
 }
 
