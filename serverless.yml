@@ -26,6 +26,14 @@ functions:
   observer:
     handler: functions/observer.index
     timeout: 60
+  tweetChecker:
+    handler: functions/tweetChecker.index
+    timeout: 30
+    environment:
+       TWITTER_CONSUMER_KEY: ${env:TWITTER_CONSUMER_KEY}
+       TWITTER_CONSUMER_SECRET: ${env:TWITTER_CONSUMER_SECRET}
+       TWITTER_ACCESS_TOKEN: ${env:TWITTER_ACCESS_TOKEN}
+       TWITTER_ACCESS_SECRET: ${env:TWITTER_ACCESS_SECRET}
   imageCreator:
     handler: functions/imageCreator.index
     timeout: 30

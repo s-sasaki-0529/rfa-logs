@@ -10,7 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.19.1",
-    "jimp": "^0.9.3"
+    "jimp": "^0.9.3",
+    "twitter": "^1.7.1"
   },
   "devDependencies": {
     "serverless-layers": "^1.4.4"
