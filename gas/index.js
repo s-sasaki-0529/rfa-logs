@@ -1,13 +1,16 @@
 var COL_SKILL_NAME = 1
 var COL_TYPE       = 2
-var COL_UNIT       = 3
-var COL_RESULT     = 4
-var COL_TOTAL      = 5
-var COL_TARGET     = 6
-var COL_GOAL       = 7
-var COL_PROGRESS   = 8
-var COL_UPDATED    = 9
-var COL_COMPLETED  = 10
+var COL_POWER      = 3
+var COL_RANGE      = 4
+var COL_SPAN       = 5
+var COL_UNIT       = 6
+var COL_RESULT     = 7
+var COL_TOTAL      = 8
+var COL_TARGET     = 9
+var COL_GOAL       = 10
+var COL_PROGRESS   = 11
+var COL_UPDATED    = 12
+var COL_COMPLETED  = 13
 
 var sheet = SpreadsheetApp.getActiveSheet();
 
