@@ -2,6 +2,21 @@ const aws = require('aws-sdk')
 const dynamoClient = new aws.DynamoDB.DocumentClient({region: 'ap-northeast-1'})
 const DYNAMO_TABLE_NAME = 'rfa-logs'
 
+function mergeResults({currentResults, newResults}) {
+  const mergedResults = {}
+
+  Object.keys(currentResults).forEach((key) => {
+    if (newResults[key] && newResults[key].value > currentResults[key].value) {
+      console.log(`更新: ${newResults[key]}`)
+      mergedResults[key] = newResults[key]
+    } else {
+      mergedResults[key] = currentResults[key]
+    }
+  })
+
+  return mergedResults
+}
+
 async function fetchCurrentResult({userName}) {
   const params = {
     TableName: DYNAMO_TABLE_NAME,
@@ -16,7 +31,7 @@ async function fetchCurrentResult({userName}) {
 }
 
 async function updateResult({userName, imageUrl, results}) {
-  const currentResult = await fetchCurrentResult({ userName })
+  const currentResults = await fetchCurrentResult({ userName })
   const newDoc = await dynamoClient.update({
     TableName: DYNAMO_TABLE_NAME,
     Key: { userName },
@@ -26,10 +41,7 @@ async function updateResult({userName, imageUrl, results}) {
         updatedAt: results[Object.keys(results)[0]].updatedAt,
         lastImageUrl: imageUrl
       },
-      ':r': {
-        ...currentResult,
-        ...results
-      }
+      ':r': mergeResults({ currentResults, newResults: results})
     },
     ReturnValues: 'UPDATED_NEW'
   }).promise()
