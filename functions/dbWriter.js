@@ -1,25 +1,39 @@
 const aws = require('aws-sdk')
 const dynamoClient = new aws.DynamoDB.DocumentClient({region: 'ap-northeast-1'})
-const DYNAMO_TABLE_NAME = 'rfa-logs'
+
+function originUrl(url) {
+  return url.substr(0, url.lastIndexOf('/')) + '/origin.jpeg'
+}
 
 function mergeResults({currentResults, newResults}) {
   const mergedResults = {}
 
   Object.keys(currentResults).forEach((key) => {
-    if (newResults[key] && newResults[key].value > currentResults[key].value) {
+    if (newResults[key] && newResults[key].value >= currentResults[key].value) {
       console.log(`更新: ${newResults[key]}`)
       mergedResults[key] = newResults[key]
-    } else {
-      mergedResults[key] = currentResults[key]
     }
   })
 
   return mergedResults
 }
 
+async function insertLog({userName, imageUrl, results}) {
+  const newDoc = await dynamoClient.put({
+    TableName: 'rfa-log-results',
+    Item: {
+      url: imageUrl,
+      originUrl: originUrl(imageUrl),
+      userName,
+      results
+    }
+  }).promise()
+  return newDoc
+}
+
 async function fetchCurrentResult({userName}) {
   const params = {
-    TableName: DYNAMO_TABLE_NAME,
+    TableName: 'rfa-logs',
     Key: { userName }
   }
   const currentDoc = await dynamoClient.get(params).promise()
@@ -32,21 +46,22 @@ async function fetchCurrentResult({userName}) {
 
 async function updateResult({userName, imageUrl, results}) {
   const currentResults = await fetchCurrentResult({ userName })
+  const mergedResults = mergeResults({ currentResults, newResults: results})
   const newDoc = await dynamoClient.update({
-    TableName: DYNAMO_TABLE_NAME,
+    TableName: 'rfa-logs',
     Key: { userName },
-    UpdateExpression: 'set results = :r, meta = :m',
+    UpdateExpression: 'set results = :r',
     ExpressionAttributeValues: {
-      ':m': {
-        updatedAt: results[Object.keys(results)[0]].updatedAt,
-        lastImageUrl: imageUrl
-      },
-      ':r': mergeResults({ currentResults, newResults: results})
+      ':r': {
+        ...currentResults,
+        ...mergedResults
+      }
     },
     ReturnValues: 'UPDATED_NEW'
   }).promise()
-
   console.log({newDoc})
+
+  await insertLog({ userName, imageUrl, results: mergedResults })
   return newDoc
 }
 

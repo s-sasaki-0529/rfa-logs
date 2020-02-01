@@ -22,6 +22,7 @@ provider:
         - dynamodb:*
       Resource:
         - "arn:aws:dynamodb:ap-northeast-1:613226550613:table/rfa-logs"
+        - "arn:aws:dynamodb:ap-northeast-1:613226550613:table/rfa-log-results"
 functions:
   observer:
     handler: functions/observer.index
