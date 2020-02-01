@@ -18,19 +18,6 @@ function mergeResults({currentResults, newResults}) {
   return mergedResults
 }
 
-async function insertLog({userName, imageUrl, results}) {
-  const newDoc = await dynamoClient.put({
-    TableName: 'rfa-log-results',
-    Item: {
-      url: imageUrl,
-      originUrl: originUrl(imageUrl),
-      userName,
-      results
-    }
-  }).promise()
-  return newDoc
-}
-
 async function fetchCurrentResult({userName}) {
   const params = {
     TableName: 'rfa-logs',
@@ -47,6 +34,8 @@ async function fetchCurrentResult({userName}) {
 async function updateResult({userName, imageUrl, results}) {
   const currentResults = await fetchCurrentResult({ userName })
   const mergedResults = mergeResults({ currentResults, newResults: results})
+  console.log({ mergedResults })
+
   const newDoc = await dynamoClient.update({
     TableName: 'rfa-logs',
     Key: { userName },
@@ -59,9 +48,6 @@ async function updateResult({userName, imageUrl, results}) {
     },
     ReturnValues: 'UPDATED_NEW'
   }).promise()
-  console.log({newDoc})
-
-  await insertLog({ userName, imageUrl, results: mergedResults })
   return newDoc
 }
 
