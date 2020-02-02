@@ -12,6 +12,8 @@ var COL_GOAL        = 11
 var COL_PROGRESS    = 12
 var COL_UPDATED     = 13
 var COL_COMPLETED   = 14
+var COL_ICON_URL    = 15
+var COL_ICON        = 16
 
 var sheet = SpreadsheetApp.getActiveSheet();
 
@@ -48,7 +50,7 @@ function updateBackgroundColor() {
   var rowsCount = 84;
   for (var row = 2; row <= rowsCount; row++) {
     var type = sheet.getRange(row, COL_TYPE).getValue()
-    var columns = sheet.getRange(row, 1, 1, COL_COMPLETED)
+    var columns = sheet.getRange(row, 1, 1, COL_ICON)
     if (type == 'うで') {
       columns.setBackgroundRGB(255, 173, 153)
     } else if (type == 'はら') {
