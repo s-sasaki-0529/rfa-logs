@@ -17,6 +17,7 @@ provider:
         - "arn:aws:lambda:ap-northeast-1:613226550613:function:sasaki-rfa-logs-dev-imageCreator"
         - "arn:aws:lambda:ap-northeast-1:613226550613:function:sasaki-rfa-logs-dev-cloudVisionDispatcher"
         - "arn:aws:lambda:ap-northeast-1:613226550613:function:sasaki-rfa-logs-dev-dbWriter"
+        - "arn:aws:lambda:ap-northeast-1:613226550613:function:sasaki-rfa-logs-dev-tweetChecker"
     - Effect: Allow
       Action:
         - dynamodb:*
