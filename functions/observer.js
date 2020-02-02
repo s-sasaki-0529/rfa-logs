@@ -9,13 +9,14 @@ async function fetchRecentUrls() {
   const result = await lambda.invoke({
     FunctionName: 'sasaki-rfa-logs-dev-tweetChecker',
   }).promise()
+
   return JSON.parse(result.Payload).urls
 }
 
 /*
  * 実行ログの一覧をDynamoから取得し、実行した元画像URLの一覧を戻す
 */
-async function fetchLogs({userName}) {
+async function fetchCompletedUrls({ userName }) {
   const params = {
     TableName: 'rfa-log-results',
     Key: { userName }
@@ -31,10 +32,7 @@ async function fetchLogs({userName}) {
 /*
  * 実行ログを挿入する
 */
-async function insertLog({userName, url}) {
-  const newUrls = await fetchLogs( { userName })
-  newUrls.push(url)
-
+async function insertLog({ userName, newUrls }) {
   const newDoc = await dynamoClient.update({
     TableName: 'rfa-log-results',
     Key: { userName },
@@ -47,17 +45,36 @@ async function insertLog({userName, url}) {
   return newDoc
 }
 
-module.exports.index = async event => {
-  const { url, userName } = event
-
-  const result = await lambda.invoke({
+/*
+ * 画像の解析処理をトリガーする
+*/
+async function run({ url, userName }) {
+  await lambda.invoke({
     FunctionName: 'sasaki-rfa-logs-dev-imageCreator',
     Payload: JSON.stringify({url, userName}) // pass params
   }).promise()
+}
 
-  await insertLog({ userName, url })
+module.exports.index = async event => {
+  const { userName } = event
 
-  return {
-    statusCode: 200
-  }
+  // 実施済みのURL一覧を取得する
+  const completedUrls = await fetchCompletedUrls({ userName })
+  console.log({ completedUrls })
+
+  // Twitterから最近のURL一覧を取得する
+  const recentUrls = await fetchRecentUrls()
+  console.log({ recentUrls })
+
+  // マージして、未実行のURLを抽出する
+  const  executingUrls = recentUrls.filter(url => !completedUrls.includes(url))
+  console.log({ executingUrls })
+
+  // それぞれ実行する
+  await Promise.all(executingUrls.map((url) => run({ url, userName })))
+
+  // 実行ログを更新する
+  await insertLog({ newUrls: completedUrls.concat(executingUrls), userName })
+
+  return { statusCode: 200 }
 }
