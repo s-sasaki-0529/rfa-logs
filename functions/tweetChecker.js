@@ -12,7 +12,7 @@ async function fetchImageUrls () {
   const tweets = await client.get('statuses/user_timeline', params)
   return tweets
     .filter((tweet) => tweet.text.includes('#RingFitAdventure'))
-    .map((tweet) => tweet.entities.media[0].media_url_https)
+    .map((tweet) => tweet.entities.media[0].media_url_https + '?format=jpg&name=large')
 }
 
 module.exports.index = async event => {

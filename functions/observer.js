@@ -61,14 +61,17 @@ module.exports.index = async event => {
   // 実施済みのURL一覧を取得する
   const completedUrls = await fetchCompletedUrls({ userName })
   console.log({ completedUrls })
+  console.log({ completedUrlsCount: completedUrls.count })
 
   // Twitterから最近のURL一覧を取得する
   const recentUrls = await fetchRecentUrls()
   console.log({ recentUrls })
+  console.log({ recentUrlsCount: recentUrls.count })
 
   // マージして、未実行のURLを抽出する
   const  executingUrls = recentUrls.filter(url => !completedUrls.includes(url))
   console.log({ executingUrls })
+  console.log({ executingUrlsCount: executingUrls.count })
 
   // それぞれ実行する
   await Promise.all(executingUrls.map((url) => run({ url, userName })))
