@@ -6,14 +6,15 @@ var COL_SPAN        = 5
 var COL_UNIT        = 6
 var COL_RESULT      = 7
 var COL_TOTAL       = 8
-var COL_TARGET      = 9
-var COL_TARGET_UNIT = 10
-var COL_GOAL        = 11
-var COL_PROGRESS    = 12
-var COL_UPDATED     = 13
-var COL_COMPLETED   = 14
-var COL_ICON_URL    = 15
-var COL_ICON        = 16
+var COL_PHASE       = 9
+var COL_TARGET      = 10
+var COL_TARGET_UNIT = 11
+var COL_GOAL        = 12
+var COL_PROGRESS    = 13
+var COL_UPDATED     = 14
+var COL_COMPLETED   = 15
+var COL_ICON_URL    = 16
+var COL_ICON        = 17
 
 var sheet = SpreadsheetApp.getActiveSheet();
 
