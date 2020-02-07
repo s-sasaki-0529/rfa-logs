@@ -27,6 +27,10 @@ provider:
 functions:
   observer:
     handler: functions/observer.index
+    events:
+      - schedule:
+        rate: rate(30 minutes)
+        enabled: true
     timeout: 60
   tweetChecker:
     handler: functions/tweetChecker.index
