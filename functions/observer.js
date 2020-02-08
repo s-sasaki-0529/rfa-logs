@@ -56,7 +56,7 @@ async function run({ url, userName }) {
 }
 
 module.exports.index = async event => {
-  const { userName } = event
+  const userName = event.userName || 'Sa2Knight'
 
   // 実施済みのURL一覧を取得する
   const completedUrls = await fetchCompletedUrls({ userName })
