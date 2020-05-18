@@ -11,10 +11,19 @@ function mergeResults({ currentResults, newResults }) {
   const mergedResults = {};
 
   Object.keys(currentResults).forEach((key) => {
-    if (newResults[key] && newResults[key].value >= currentResults[key].value) {
-      console.log(`更新: ${newResults[key]}`);
-      mergedResults[key] = newResults[key];
+    if (!newResults[key]) return;
+    if (newResults[key].value >= currentResults[key].value) {
+      console.log("現在の記録より小さな値を検出");
+      console.log({ key, result: newResults[key].value });
+      return;
     }
+    if (newResults[key].value - currentResults[key].value > 300) {
+      console.log("現在の記録よりも極端に大きな値を検出");
+      console.log({ key, result: newResults[key].value });
+      return;
+    }
+    console.log(`更新成功: ${newResults[key]}`);
+    mergedResults[key] = newResults[key];
   });
 
   return mergedResults;
