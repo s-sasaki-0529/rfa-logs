@@ -12,7 +12,7 @@ function mergeResults({ currentResults, newResults }) {
 
   Object.keys(currentResults).forEach((key) => {
     if (!newResults[key]) return;
-    if (newResults[key].value >= currentResults[key].value) {
+    if (newResults[key].value < currentResults[key].value) {
       console.log("現在の記録より小さな値を検出");
       console.log({ key, result: newResults[key].value });
       return;
